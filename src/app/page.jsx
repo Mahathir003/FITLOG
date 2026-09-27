@@ -1,179 +1,190 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { FaClock, FaFire, FaStar, FaArrowRight } from "react-icons/fa";
-import { CgGym } from "react-icons/cg";
 
 export default function Home() {
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedMuscle, setSelectedMuscle] = useState("All");
 
   useEffect(() => {
     fetch("https://api.abcz.workers.dev/api/fitlog")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch workouts");
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
         setWorkouts(data);
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message);
+        console.error("Failed to fetch workouts:", err);
         setLoading(false);
       });
   }, []);
 
-  const scrollToLibrary = () => {
-    const section = document.getElementById("library");
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const muscleGroups = [
+    "All",
+    "Chest",
+    "Back",
+    "Legs",
+    "Core",
+    "Arms",
+    "Shoulders",
+    "Full Body",
+  ];
+
+  const filteredWorkouts = workouts.filter((item) => {
+    const matchesSearch =
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.equipment.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesMuscle =
+      selectedMuscle === "All" || item.muscleGroups?.includes(selectedMuscle);
+    return matchesSearch && matchesMuscle;
+  });
 
   return (
-    <div className="min-h-screen bg-[#121212] text-neutral-100">
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 flex flex-col lg:flex-row items-center justify-between gap-12 border-b border-neutral-800">
-        <div className="max-w-2xl space-y-6">
-          <span className="text-[#CCFF00] font-mono tracking-widest text-xs uppercase bg-neutral-900 px-3 py-1 rounded-full border border-neutral-800">
-            WORKOUT LIBRARY
-          </span>
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight uppercase leading-none">
-            TRAIN WITH INTENT. LOG EVERY SET.
-          </h1>
-          <p className="text-neutral-400 text-base sm:text-lg leading-relaxed">
-            FitLog is a dark, no-nonsense gym companion: pick a lift, lock it
-            into today's plan, and watch the week's work add up.
-          </p>
-          <div>
-            <button
-              onClick={scrollToLibrary}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#CCFF00] text-neutral-950 font-bold transition hover:opacity-90 shadow-lg shadow-[#CCFF00]/10"
+    <main className="min-h-screen bg-[#121212] text-white">
+      {/* Hero Section Container Box */}
+      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="bg-[#18181b]/90 border border-zinc-800/80 rounded-3xl p-6 sm:p-12 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+          {/* Left Content */}
+          <div className="max-w-xl">
+            <span className="text-lime-400 text-xs font-bold tracking-widest uppercase block mb-3">
+              Workout Library
+            </span>
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-4 uppercase leading-tight">
+              Train with intent. Log every set.
+            </h1>
+            <p className="text-zinc-400 text-sm sm:text-base mb-8 leading-relaxed">
+              FitLog is a dark, no-nonsense gym companion: pick a lift, lock it
+              into today&apos;s plan, and watch the week&apos;s work add up.
+            </p>
+            <a
+              href="#workouts"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-lime-400 text-zinc-950 font-bold text-sm hover:bg-lime-300 transition-all shadow-lg shadow-lime-400/25"
             >
-              <span>BROWSE WORKOUTS</span>
-              <FaArrowRight />
-            </button>
+              BROWSE WORKOUTS
+            </a>
           </div>
-        </div>
 
-        {/* Hero Illustration / Banner Image */}
-        {/* Hero Illustration / Banner Image */}
-        <div className="relative w-full lg:w-[450px] h-[350px] sm:h-[420px] flex items-center justify-center">
-          <Image
-            src="/banner.png"
-            alt="Workout Banner"
-            fill
-            className="object-contain drop-shadow-2xl"
-            priority
-          />
+          {/* Right Banner Image from Public Folder */}
+          <div className="relative w-full max-w-sm lg:max-w-md aspect-square flex items-center justify-center overflow-hidden rounded-2xl">
+            <img
+              src="/banner.png"
+              alt="FitLog Banner"
+              className="w-full h-full object-cover rounded-2xl opacity-90 hover:scale-105 transition-transform duration-500"
+            />
+          </div>
         </div>
       </section>
 
-      {/* Library Section */}
+      {/* The Library Section */}
       <section
-        id="library"
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
+        id="workouts"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
       >
-        <div className="mb-10 space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-wider">
-            THE LIBRARY
-          </h2>
-          <p className="text-neutral-400 text-sm sm:text-base">
-            Twelve lifts covering every major muscle group.
-          </p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase">
+              THE LIBRARY
+            </h2>
+            <p className="text-zinc-400 text-sm mt-1">
+              Twelve lifts covering every major muscle group.
+            </p>
+          </div>
+
+          {/* Search Bar */}
+          <div className="w-full md:w-72">
+            <input
+              type="text"
+              placeholder="Search exercises or equipment..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-500 text-sm focus:outline-none focus:border-lime-400 transition-colors"
+            />
+          </div>
+        </div>
+
+        {/* Muscle Group Filter Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+          {muscleGroups.map((muscle) => (
+            <button
+              key={muscle}
+              onClick={() => setSelectedMuscle(muscle)}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${
+                selectedMuscle === muscle
+                  ? "bg-lime-400 text-zinc-950 shadow-md shadow-lime-400/20"
+                  : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-white hover:bg-zinc-800"
+              }`}
+            >
+              {muscle}
+            </button>
+          ))}
         </div>
 
         {/* Loading State */}
-        {loading && (
+        {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
+            {[1, 2, 3, 4, 5, 6].map((n) => (
               <div
-                key={i}
-                className="h-80 bg-neutral-900/50 rounded-2xl border border-neutral-800 animate-pulse flex flex-col justify-end p-6"
-              >
-                <div className="h-4 bg-neutral-800 rounded w-1/3 mb-3"></div>
-                <div className="h-6 bg-neutral-800 rounded w-3/4 mb-4"></div>
-                <div className="h-4 bg-neutral-800 rounded w-1/2"></div>
-              </div>
+                key={n}
+                className="h-80 rounded-2xl bg-zinc-900/50 animate-pulse border border-zinc-800/50"
+              />
             ))}
           </div>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <div className="p-6 bg-red-950/40 border border-red-900/50 rounded-xl text-red-400 text-center">
-            Error loading workouts: {error}. Please check your connection.
+        ) : filteredWorkouts.length === 0 ? (
+          <div className="text-center py-20 bg-zinc-900/30 rounded-3xl border border-zinc-800/50">
+            <p className="text-zinc-400 text-lg">
+              No workouts found matching your criteria.
+            </p>
           </div>
-        )}
-
-        {/* Workout Grid */}
-        {!loading && !error && (
+        ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {workouts.map((workout) => (
+            {filteredWorkouts.map((workout) => (
               <Link
                 key={workout.id}
                 href={`/workouts/${workout.id}`}
-                className="group bg-neutral-900 rounded-2xl border border-neutral-800 overflow-hidden transition-all duration-300 hover:border-[#CCFF00]/50 hover:shadow-xl hover:shadow-[#CCFF00]/5 flex flex-col"
+                className="group bg-[#18181b]/80 border border-zinc-800/80 rounded-2xl overflow-hidden hover:border-lime-400/50 transition-all duration-300 flex flex-col shadow-xl"
               >
                 {/* Card Image */}
-                <div className="relative h-48 w-full bg-neutral-950 overflow-hidden">
-                  {workout.image ? (
-                    <img
-                      src={workout.image}
-                      alt={workout.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-neutral-700">
-                      <CgGym className="text-4xl" />
-                    </div>
-                  )}
-                  <div className="absolute top-3 left-3 flex gap-1.5 flex-wrap">
-                    {Array.isArray(workout.category) ? (
-                      workout.category.map((cat, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2.5 py-0.5 rounded-md bg-neutral-950/80 backdrop-blur text-[10px] font-bold text-[#CCFF00] uppercase tracking-wider"
-                        >
-                          {cat}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="px-2.5 py-0.5 rounded-md bg-neutral-950/80 backdrop-blur text-[10px] font-bold text-[#CCFF00] uppercase tracking-wider">
-                        {workout.category}
-                      </span>
-                    )}
-                  </div>
+                <div className="relative h-48 overflow-hidden bg-zinc-950">
+                  <img
+                    src={workout.image}
+                    alt={workout.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                  />
                 </div>
 
                 {/* Card Content */}
-                <div className="p-5 flex flex-col flex-grow justify-between space-y-4">
-                  <div className="space-y-1">
-                    <h3 className="font-bold text-lg text-neutral-100 group-hover:text-[#CCFF00] transition-colors uppercase">
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    {/* Lime Muscle Tags */}
+                    <div className="flex flex-wrap gap-1.5 mb-2.5">
+                      {workout.muscleGroups?.map((m, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[10px] font-bold px-2.5 py-0.5 rounded-md bg-lime-400 text-zinc-950 uppercase tracking-wider"
+                        >
+                          {m}
+                        </span>
+                      ))}
+                    </div>
+
+                    <h3 className="text-lg font-bold text-white mb-1 uppercase tracking-wide group-hover:text-lime-400 transition-colors">
                       {workout.name}
                     </h3>
-                    <p className="text-xs text-neutral-400">
-                      {workout.equipment || "Bodyweight"}
+                    <p className="text-zinc-400 text-xs mb-4">
+                      {workout.equipment}
                     </p>
                   </div>
 
-                  {/* Stats Row */}
-                  <div className="flex items-center justify-between pt-3 border-t border-neutral-800/80 text-xs text-neutral-400">
-                    <div className="flex items-center gap-1">
-                      <FaClock className="text-neutral-500" />
-                      <span>{workout.duration} min</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FaFire className="text-orange-500" />
-                      <span>{workout.caloriesBurned} kcal</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FaStar className="text-yellow-500" />
-                      <span>{workout.rating}</span>
-                    </div>
+                  {/* Footer Stats */}
+                  <div className="flex items-center justify-between text-xs text-zinc-400 pt-3 border-t border-zinc-800/80">
+                    <span>⏱️ {workout.duration} min</span>
+                    <span>🔥 {workout.caloriesBurned} kcal</span>
+                    <span className="text-amber-400 font-semibold">
+                      ⭐ {workout.rating}
+                    </span>
                   </div>
                 </div>
               </Link>
@@ -181,6 +192,6 @@ export default function Home() {
           </div>
         )}
       </section>
-    </div>
+    </main>
   );
 }
