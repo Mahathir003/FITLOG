@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { PlanProvider } from "@/context/PlanContext";
+import { AuthProvider } from "@/context/AuthContext"; // 1. Import AuthProvider
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,12 +29,15 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#121212] text-neutral-100 min-h-screen flex flex-col`}
       >
-        <PlanProvider>
-          <Toaster position="top-right" />
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-        </PlanProvider>
+        {/* 2. Wrap AuthProvider around PlanProvider and the rest of the app */}
+        <AuthProvider>
+          <PlanProvider>
+            <Toaster position="top-right" />
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </PlanProvider>
+        </AuthProvider>
       </body>
     </html>
   );
