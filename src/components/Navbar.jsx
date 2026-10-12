@@ -4,14 +4,11 @@ import Link from "next/link";
 import { usePlan } from "@/context/PlanContext";
 
 export default function Navbar() {
-  const context = usePlan();
-  const plan = context?.plan || [];
-  const savedWorkouts = context?.savedWorkouts || [];
+  const { todayPlan = [], savedList = [] } = usePlan() || {};
 
   return (
     <header className="sticky top-0 z-50 bg-[#121212]/95 backdrop-blur-md border-b border-zinc-800 w-full">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        {/* Top bar: Logo & Plan/Saved counters */}
         <div className="h-14 sm:h-16 flex items-center justify-between gap-2">
           {/* Logo */}
           <Link
@@ -62,7 +59,7 @@ export default function Navbar() {
             >
               <span>Plan</span>
               <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-zinc-950 text-lime-400 flex items-center justify-center text-[10px] sm:text-xs font-bold">
-                {plan.length}
+                {todayPlan.length}
               </span>
             </Link>
 
@@ -72,13 +69,13 @@ export default function Navbar() {
             >
               <span>Saved</span>
               <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-zinc-800 text-zinc-200 flex items-center justify-center text-[10px] sm:text-xs font-bold border border-zinc-700">
-                {savedWorkouts.length}
+                {savedList.length}
               </span>
             </Link>
           </div>
         </div>
 
-        {/* Mobile Navigation Sub-bar (Workouts & My Plan buttons) */}
+        {/* Mobile Navigation Sub-bar */}
         <div className="flex md:hidden items-center justify-center gap-2 pb-2.5 pt-0.5 border-t border-zinc-900">
           <Link
             href="/"

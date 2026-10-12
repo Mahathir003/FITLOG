@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 
 const PlanContext = createContext();
@@ -7,6 +7,7 @@ const PlanContext = createContext();
 export function PlanProvider({ children }) {
   const [todayPlan, setTodayPlan] = useState([]);
   const [savedList, setSavedList] = useState([]);
+  const isLoaded = useRef(false);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -17,15 +18,19 @@ export function PlanProvider({ children }) {
       if (storedSaved) setSavedList(JSON.parse(storedSaved));
     } catch (e) {
       console.error("Failed to load from localStorage", e);
+    } finally {
+      isLoaded.current = true;
     }
   }, []);
 
-  // Sync with localStorage
+  // Sync with localStorage only AFTER initial load
   useEffect(() => {
+    if (!isLoaded.current) return;
     localStorage.setItem("fitlog_today_plan", JSON.stringify(todayPlan));
   }, [todayPlan]);
 
   useEffect(() => {
+    if (!isLoaded.current) return;
     localStorage.setItem("fitlog_saved", JSON.stringify(savedList));
   }, [savedList]);
 
