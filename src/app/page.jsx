@@ -17,7 +17,7 @@ export default function Home() {
     {
       icon: <FaUtensils className="text-[#00A3FF] text-lg" />,
       title: "Track Your Food",
-      desc: "Choose ingredients, enter weights, and see the exact calories you consume.",
+      desc: "Choose ingredients, enter weights, and see the calories you consume.",
       link: "/diet",
     },
     {
@@ -41,16 +41,33 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#030816] text-white relative overflow-hidden flex flex-col justify-between">
-      {/* Background radial glow effects */}
-      <div className="absolute top-1/4 right-0 w-[550px] h-[550px] bg-[#00A3FF]/15 rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="absolute bottom-10 left-10 w-[450px] h-[450px] bg-blue-900/10 rounded-full blur-[130px] pointer-events-none -z-10" />
+    <main className="min-h-screen bg-[#030816] text-white flex flex-col justify-between overflow-x-hidden">
+      {/* FULL-WIDTH HERO BANNER SECTION */}
+      <section className="relative w-full min-h-[640px] sm:min-h-[720px] flex items-center overflow-hidden">
+        {/* Full-bleed background image with directional gradients */}
+        <div
+          className="absolute inset-0 bg-no-repeat bg-cover bg-[center_right] lg:bg-[right_center] z-0"
+          style={{ backgroundImage: "url('/hero-banner.png')" }}
+        >
+          {/* Left-to-right fade: guarantees readable text and seamless blending on the left */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#030816] via-[#030816]/85 to-transparent sm:via-[#030816]/60 lg:to-transparent" />
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 pb-12 w-full flex-1 flex flex-col justify-center">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Column: Typography & CTAs */}
-          <div className="lg:col-span-7 space-y-6 z-10">
+          {/* Top and bottom subtle vignettes */}
+          <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#030816] to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#030816] to-transparent" />
+        </div>
+
+        {/* Floating Decorative Tagline on the Top Right */}
+        <div className="hidden lg:block absolute top-12 right-16 sm:right-24 z-10 pointer-events-none select-none">
+          <p className="font-serif italic text-xl text-[#00A3FF] tracking-wide rotate-[6deg] drop-shadow-[0_0_12px_rgba(0,163,255,0.5)]">
+            Better Choices <br />
+            <span className="text-sky-200">Bigger Results</span>
+          </p>
+        </div>
+
+        {/* Hero Interactive Text Layer */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+          <div className="max-w-2xl space-y-6">
             <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#00A3FF] font-semibold block">
               TRACK · EAT · WORKOUT · IMPROVE
             </span>
@@ -62,12 +79,11 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="text-slate-400 text-sm sm:text-base max-w-lg leading-relaxed">
+            <p className="text-slate-300 text-sm sm:text-base max-w-lg leading-relaxed">
               Track your calories, plan your meals, choose your workouts, and
               reach your fitness goals — all in one unified place.
             </p>
 
-            {/* CTA Button */}
             <div className="pt-2">
               <Link
                 href={user ? "/workouts" : "/register"}
@@ -78,44 +94,11 @@ export default function Home() {
               </Link>
             </div>
           </div>
-
-          {/* Right Column: Hero Visual with Tagline */}
-          <div className="lg:col-span-5 relative flex items-center justify-center">
-            {/* Top-Right Decorative Script */}
-            <div className="absolute -top-6 right-4 sm:right-10 pointer-events-none select-none z-20">
-              <p className="font-serif italic text-lg sm:text-xl text-[#00A3FF] tracking-wide rotate-[6deg] drop-shadow-[0_0_10px_rgba(0,163,255,0.4)]">
-                Better Choices <br />
-                <span className="text-sky-200">Bigger Results</span>
-              </p>
-            </div>
-
-            {/* Glow Halo behind athlete visual */}
-            <div className="relative w-full max-w-md aspect-[4/5] rounded-3xl overflow-hidden flex items-center justify-center">
-              <div className="absolute inset-0 bg-gradient-to-t from-[#030816] via-transparent to-transparent z-10" />
-
-              <img
-                src="/hero-athlete.JPG"
-                alt="Healthycise Athlete"
-                className="w-full h-full object-cover object-center filter drop-shadow-[0_0_40px_rgba(0,163,255,0.35)]"
-                onError={(e) => {
-                  // Fallback container if the custom athlete image hasn't been added to public/ yet
-                  e.currentTarget.style.display = "none";
-                  e.currentTarget.parentElement.classList.add(
-                    "bg-gradient-to-b",
-                    "from-sky-950/40",
-                    "to-[#030816]",
-                    "border",
-                    "border-sky-900/30",
-                  );
-                }}
-              />
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* Bottom 4 Feature Pillars */}
-      <section className="border-t border-sky-950/60 bg-[#040C1F]/60 backdrop-blur-md py-10">
+      {/* 4 FEATURE PILLARS */}
+      <section className="border-t border-sky-950/60 bg-[#040C1F]/60 backdrop-blur-md py-10 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((item, idx) => (
