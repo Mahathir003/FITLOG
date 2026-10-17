@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { FaUserCircle, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { FaSignOutAlt, FaUser } from "react-icons/fa";
 
 export default function Navbar() {
   const { user, logout } = useAuth() || {};
   const pathname = usePathname();
+  const router = useRouter();
   const [profileOpen, setProfileOpen] = useState(false);
 
   const navLinks = [
@@ -19,6 +19,21 @@ export default function Navbar() {
     { name: "My Profile", href: "/profile" },
   ];
 
+  // Universal handler that works from ANY page to scroll down smoothly
+  const handleAuthClick = (authType) => {
+    if (pathname === "/") {
+      // If already on home page, change URL query without refreshing and scroll smoothly
+      router.push(`/?auth=${authType}`, { scroll: false });
+      const element = document.getElementById("auth-section");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    } else {
+      // If on another page, navigate to home page with query param
+      router.push(`/?auth=${authType}`);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-[#030816]/80 backdrop-blur-xl border-b border-sky-950/40 w-full transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -26,13 +41,10 @@ export default function Navbar() {
           {/* Logo & Brand Name */}
           <Link href="/" className="flex items-center gap-3 group shrink-0">
             <div className="relative w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-105">
-              <Image
+              <img
                 src="/logo.png"
                 alt="Healthycise Logo"
-                width={40}
-                height={40}
-                className="object-contain drop-shadow-[0_0_12px_rgba(0,163,255,0.7)]"
-                priority
+                className="w-10 h-10 object-contain drop-shadow-[0_0_12px_rgba(0,163,255,0.7)]"
               />
             </div>
             <span className="font-extrabold text-2xl tracking-tight text-white">
@@ -66,7 +78,7 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full bg-[#06122C] border border-sky-800/40 hover:border-[#00A3FF] transition"
+                  className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full bg-[#06122C] border border-sky-800/40 hover:border-[#00A3FF] transition cursor-pointer"
                 >
                   <img
                     src={user.avatar}
@@ -101,7 +113,7 @@ export default function Navbar() {
                         setProfileOpen(false);
                         logout();
                       }}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-950/30 rounded-xl transition"
+                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-950/30 rounded-xl transition cursor-pointer"
                     >
                       <FaSignOutAlt />
                       <span>Log Out</span>
@@ -111,18 +123,18 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-2 sm:gap-3">
-                <Link
-                  href="/login"
-                  className="px-5 py-2 rounded-full bg-[#06122C]/80 border border-sky-900/50 text-xs font-bold text-slate-200 hover:text-white hover:border-[#00A3FF] transition"
+                <button
+                  onClick={() => handleAuthClick("login")}
+                  className="px-5 py-2 rounded-full bg-[#06122C]/80 border border-sky-900/50 text-xs font-bold text-slate-200 hover:text-white hover:border-[#00A3FF] transition cursor-pointer"
                 >
                   Log In
-                </Link>
-                <Link
-                  href="/register"
-                  className="px-5 py-2 rounded-full bg-[#00A3FF] text-xs font-bold text-white hover:bg-[#008fdf] transition shadow-[0_0_20px_rgba(0,163,255,0.5)]"
+                </button>
+                <button
+                  onClick={() => handleAuthClick("register")}
+                  className="px-5 py-2 rounded-full bg-[#00A3FF] text-xs font-bold text-white hover:bg-[#008fdf] transition shadow-[0_0_20px_rgba(0,163,255,0.5)] cursor-pointer"
                 >
                   Sign Up
-                </Link>
+                </button>
               </div>
             )}
           </div>

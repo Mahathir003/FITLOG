@@ -1,41 +1,26 @@
 import "./globals.css";
-import { Geist, Geist_Mono } from "next/font/google";
-
-import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "@/context/AuthContext";
+import { PlanProvider } from "@/context/PlanContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { PlanProvider } from "@/context/PlanContext";
-import { AuthProvider } from "@/context/AuthContext"; // 1. Import AuthProvider
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { Toaster } from "react-hot-toast";
 
 export const metadata = {
-  title: "Fit Log — Workout Library & Planning",
+  title: "Healthycise — Fitness & Nutrition Platform",
   description:
-    "A dark, no-nonsense gym companion to pick lifts and log workouts.",
+    "Track your calories, plan your meals, and choose your workouts.",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#121212] text-neutral-100 min-h-screen flex flex-col`}
-      >
-        {/* 2. Wrap AuthProvider around PlanProvider and the rest of the app */}
+    <html lang="en" data-scroll-behavior="smooth">
+      <body className="bg-[#030816] text-white antialiased min-h-screen flex flex-col selection:bg-[#00A3FF] selection:text-white">
         <AuthProvider>
           <PlanProvider>
-            <Toaster position="top-right" />
             <Navbar />
-            <main className="flex-grow">{children}</main>
+            <div className="flex-1">{children}</div>
             <Footer />
+            <Toaster position="bottom-right" />
           </PlanProvider>
         </AuthProvider>
       </body>
