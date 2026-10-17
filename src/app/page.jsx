@@ -94,7 +94,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-[#030816] via-transparent to-transparent z-10" />
 
               <img
-                src="/hero-athlete.png"
+                src="/hero-athlete.JPG"
                 alt="Healthycise Athlete"
                 className="w-full h-full object-cover object-center filter drop-shadow-[0_0_40px_rgba(0,163,255,0.35)]"
                 onError={(e) => {
